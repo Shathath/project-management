@@ -17,14 +17,16 @@ var createDesignation =  function( req, res )
 {
 	var { name } = req.body;
 
-	db.query(`insert into designation(name) values($1) returning *` [ name], function(error, dbResponse)
+	db.query(`INSERT INTO designation(name) VALUES($1) RETURNING *`, [name], function(error, dbResponse)
 	{
-		if(err)
+		if(error)
 		{
 			return;
 		}
 
 		res.status(201).json( { data : dbResponse.rows })
+
+		db.end();
 	})
 }
 

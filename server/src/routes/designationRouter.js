@@ -1,13 +1,14 @@
+
 const express = require('express');
 
 const designationController = require('../controller/designationController');
 
 const designationRouter = express.Router();
 
-designationRouter.get('/getuser', designationController.getUser);
+//designationRouter.get('/getuser', designationController.getAllDesignation);
 
-designationRouter.get('/getalluser', designationController.getAllUser);
+designationRouter.get('/getalldesignation', designationController.getAllDesignation);
 
-designationRouter.post('/createuser', designationController.createUser);
+designationRouter.post('/createdesignation', designationController.createDesignation);
 
 module.exports = designationRouter;
