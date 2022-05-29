@@ -6,14 +6,6 @@ create table designation
 	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 
-create table projects
-(
-	 project_id bigint serial primary key,
-	 name varchar(265) not null,
-	 created_by int references users(users_id),
-	 create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-)
-
 create table users
 (
 	user_id serial primary key,
@@ -21,6 +13,14 @@ create table users
 	email varchar(128) not null,
 	designation_id int references designation(designation_id),
 	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+
+create table projects
+(
+	 project_id bigint serial primary key,
+	 name varchar(265) not null,
+	 created_by int references users(users_id),
+	 create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
 
 create table tasks

@@ -4,7 +4,7 @@ var getAllDesignation  = function( req, res )
 {
 	db.query('select * from designation', function(error, dbResponse) 
 	{
-		if(err)
+		if(error)
 		{
 			return;
 		}
@@ -21,6 +21,8 @@ var createDesignation =  function( req, res )
 	{
 		if(error)
 		{
+			res.status(400).json({ message : 'Not able to create '});
+
 			return;
 		}
 
