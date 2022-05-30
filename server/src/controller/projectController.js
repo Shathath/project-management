@@ -10,6 +10,8 @@ var getAllProjects  = function( req, res )
 		}
 
 		res.status(200).json( {data : dbResponse.rows});
+
+		db.end();
 	})
 }
 
@@ -23,6 +25,8 @@ var getProject = function( req, res )
 		}
 
 		res.status(200).json({ data : dbResponse.rows });
+
+		db.end();
 	})
 }
 
@@ -30,14 +34,18 @@ var createProjects =  function( req, res )
 {
 	var { name, created_by } = req.body;
 
-	db.query(`insert into projects(name,created_by) values($1,$2) returning *` [name, created_by], function(error, dbResponse)
+	db.query(`insert into projects(name,created_by) values($1,$2) returning *`, [name, created_by], function(error, dbResponse)
 	{
 		if(error)
 		{
-			return;
+			res.status(400).json({ error : error.message});
+
+			return
 		}
 
 		res.status(201).json( { data : dbResponse.rows })
+
+		db.end();
 	})
 }
 
