@@ -8,6 +8,6 @@ taskRouter.get('/gettask/:id', taskController.getTask );
 
 taskRouter.get('/getalltask', taskController.getAllTasks);
 
-taskRouter.get('/createtask', taskController.createTask);
+taskRouter.post('/createtask', taskController.createTask);
 
 module.exports = taskRouter;
