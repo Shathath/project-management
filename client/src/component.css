@@ -1,14 +1,4 @@
-.pro-sidebar 
-{
-	width: 18%;
-    height: 100%;
-    border-right: 1px solid #F4F8FB;
-    align-items: flex-start;
-    box-sizing: border-box;
-    padding: 0px 5%;
-    line-height: 35px
-}
-
+.pro-sidebar {width: 18%; height: 100%;border-right: 1px solid #F4F8FB;align-items: flex-start; box-sizing: border-box;padding: 0px 5%;line-height: 35px}
 .pro-sidebar__list { padding: 2px 15px;border-radius: 24px; cursor: pointer;}
 .pro-sidebar__optioncontainer {  margin-top: 55%;}
 .pro-sidebar__list:hover{ background: #f7f7f7;}

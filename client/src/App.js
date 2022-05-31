@@ -7,5 +7,6 @@ function App() {
     </div>
   );
 }
+function Dashboard () { console.log("Called"); return `<h1>Hello</h1>` };
 
 export default App;

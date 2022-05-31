@@ -1,41 +1,54 @@
 import React, {useState} from 'react';
 import SvgIcon from '../svgicon';
+import { Link } from 'react-router-dom';
 
 function SideBar()
 {
 	const [options ] = useState(
 	[
 		{
-			name : 'Dashborad',
-			iconName : 'dashBoard' 
+			name : 'Dashboard',
+			iconName : 'dashBoard',
+			route : '/dashboard'
 		},
 		{
 			name : 'Projects',
-			iconName : 'projects'
+			iconName : 'projects',
+			route : '/projects'
 		},
 		{
 			name : 'Tasks',
-			iconName : 'tasks'
+			iconName : 'tasks',
+			route : '/tasks'
 		}
-	])
+	]);
+
 	const renderOptions = function()
 	{
 		return options.map((option)=> 
 		{
-			return <div className="flexAl-center pro-sidebar__list mT10">
-					  
-					  {option.iconName ? <SvgIcon name={option.iconName} /> : "" }
-					  
-					  <div className="mL10">{option.name}</div>
-					
-					</div>
+			return <nav className="pro-sidebar__list mT10" key={option.name}>
+						
+						<Link to={option.route} className="flexAl-center linkstyle">
+
+							{option.iconName ? <SvgIcon name={option.iconName} /> : "" }
+
+							<div className="mL10">{option.name}</div>
+
+						</Link>
+				  </nav>
+						
 		})
 	}
 	return (
 		 <div className="pro-sidebar flex-column">
-			 <main className="pro-sidebar__optioncontainer">
-			 	{ renderOptions() }
-			 </main>
+			
+			<main className="pro-sidebar__optioncontainer">
+			 	
+				{ renderOptions() }
+			
+			</main>
+
 		 </div>
 	)
 }
