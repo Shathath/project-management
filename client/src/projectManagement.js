@@ -4,6 +4,10 @@ import { BrowserRouter , Routes, Route } from 'react-router-dom';
 
 import SideBar from './components/sideBar';
 
+import DashBoard from './dashboard';
+
+import Projects from './projects';
+
 import './component.css';
 
 import './common.css'
@@ -15,12 +19,13 @@ function ProjectManagement()
 			<BrowserRouter>
 				<SideBar />
 				<Routes>
-					<Route path="dashboard" element={<Dashboard />}></Route>
+					<Route path="dashboard" element={<DashBoard />}></Route>
+					<Route path="projects" element={<Projects />}></Route>
 				</Routes>
 			</BrowserRouter>
 		</div>
 		 
 	)
 }
-const Dashboard = () => <h1>Hello</h1>
+
 export default ProjectManagement
