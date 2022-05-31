@@ -9,6 +9,8 @@ var getAllProjects  = function( req, res )
 			return;
 		}
 
+		console.log( dbResponse.rows );
+		
 		res.status(200).json( {data : dbResponse.rows});
 
 		db.end();
