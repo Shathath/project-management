@@ -5,11 +5,19 @@ import useProjects from './hooks/useProjects';
 function Projects()
 {
 	const projects = useProjects();
-	
 
-	console.log( "Rendering", projects );
-
-	return <h1>Projects</h1>
+	const renderProjects = function()
+	{
+		if(projects.length > 0)
+		{
+			return projects.map((project) => 
+			{
+				return <div>{project.name}</div>
+			})
+		}
+		return "";
+	}
+	return renderProjects();
 }
 
 export default Projects;

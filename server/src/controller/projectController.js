@@ -6,14 +6,10 @@ var getAllProjects  = function( req, res )
 	{
 		if(error)
 		{
-			return;
+			return res.json({ message : error.message});
 		}
 
-		console.log( dbResponse.rows );
-		
 		res.status(200).json( {data : dbResponse.rows});
-
-		db.end();
 	})
 }
 
@@ -27,8 +23,6 @@ var getProject = function( req, res )
 		}
 
 		res.status(200).json({ data : dbResponse.rows });
-
-		db.end();
 	})
 }
 
@@ -46,8 +40,6 @@ var createProjects =  function( req, res )
 		}
 
 		res.status(201).json( { data : dbResponse.rows })
-
-		db.end();
 	})
 }
 

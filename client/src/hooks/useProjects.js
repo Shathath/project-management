@@ -10,7 +10,7 @@ function useProjects()
 		
 		const projectResp = await httpGetProjects();
 
-		setProjects( projectResp );	
+		setProjects( projectResp.data );	
 	
 	},[]);
 

@@ -1,10 +1,14 @@
+import axios from 'axios';
+
 const API_URL = 'http://localhost:8000';
 
 async function httpGetProjects()
 {
-	const response = await fetch(`${API_URL}/getallprojects`)
+	const response = await axios.get(`${API_URL}/getallprojects`);
 
-	return await response.json();
+	console.log( "Response", response );
+
+	return response;
 }
 
 export 

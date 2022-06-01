@@ -15,15 +15,17 @@ const PORT = 8000;
 
 const app = express();
 
-app.use(cors({origin: 'http://localhost:3000'}));
+// app.use(cors());
 
 app.use( express.json() );
 
-app.use( taskRouter );
+// app.use( taskRouter );
 
-app.use( userRouter );
+// app.use( userRouter );
 
-app.use( designationRouter );
+// app.use( designationRouter );
+
+console.log("Rewuest");
 
 app.use( projectRouter );
 

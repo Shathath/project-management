@@ -1,13 +1,11 @@
-const { Client } = require('pg');
+const { Pool } = require('pg');
 
 const connectionString = "postgresql://postgres:12345678@localhost:5432/projecttrack";
 
 
-const client = new Client({ connectionString });
-
-client.connect();
+const pool = new Pool({ connectionString });
 
 module.exports = 
 {
-	db : client
+	db : pool
 }

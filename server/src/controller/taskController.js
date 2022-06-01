@@ -1,3 +1,4 @@
+const {response}=require('express');
 const { db } = require('../model/db');
 
 var createTask = function(req,res)
@@ -11,8 +12,6 @@ var createTask = function(req,res)
 		function(err, dbResponse) 
 		{	
 			res.status(201).json( { data : dbResponse.rows } )
-	  		
-			db.end();
 		}
 	)
 }
@@ -23,19 +22,28 @@ var getTask = function(req,res)
 
 	db.query(`select * from tasks where task_id=${id} `, function(error,dbresponse)
 	{
+		if( error ) 
+		{
+			res.status(500).json({ error : 'Not able to query db '});
+
+			return;
+		}
 		res.status(200).json( dbresponse )
-		
-		db.end();
 	})
 }
 
 var getAllTasks = function( req, res ) 
 {
-	db.query('select * from tasks', function( req, dbresponse )
+	db.query('select * from tasks', function( error, dbresponse )
 	{
-		res.status(200).json( dbresponse )
+		if( error ) 
+		{
+			res.status(500).json({ error : 'Not able to query db '});
 
-		db.end();
+			return;
+		}
+
+		res.status(200).json( { data : dbResponse.rows} )
 	})
 }
 
