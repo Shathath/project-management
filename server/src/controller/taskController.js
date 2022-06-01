@@ -9,8 +9,15 @@ var createTask = function(req,res)
  		
 		"insert into tasks( task_name, description, assigned_to, duedate, priority, created_by, project_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING *",[task_name, description, assigned_to, duedate, priority, created_by, project_id],
 		
-		function(err, dbResponse) 
+		function(error, dbResponse) 
 		{	
+			if(error)
+			{
+				res.status(400).json({ error : error.message});
+
+				return
+			}
+
 			res.status(201).json( { data : dbResponse.rows } )
 		}
 	)
@@ -34,7 +41,7 @@ var getTask = function(req,res)
 
 var getAllTasks = function( req, res ) 
 {
-	db.query('select * from tasks', function( error, dbresponse )
+	db.query('select * from tasks', function( error, dbResponse )
 	{
 		if( error ) 
 		{

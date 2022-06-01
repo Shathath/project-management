@@ -27,8 +27,6 @@ var createDesignation =  function( req, res )
 		}
 
 		res.status(201).json( { data : dbResponse.rows })
-
-		db.end();
 	})
 }
 
