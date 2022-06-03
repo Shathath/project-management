@@ -37,16 +37,17 @@ export const projectSlice = createSlice(
 			state.isloading = true
 		},
 
-		[ fetchProjects.fulfilled ] : ( state, action ) => 
+		[ fetchProjects.fulfilled ] : ( state, { payload } ) => 
 		{
-			//state.isloading = false;
+			state.isloading = false;
 
-			console.log( "PAYLOAD", state, action )
+			console.log( payload.data );
+			state.projects = payload.data;
 		},
 
 		[ fetchProjects.rejected ] : ( state ) => 
 		{
-			// state.isloading = false;
+			state.isloading = false;
 		}
 	}
   ,

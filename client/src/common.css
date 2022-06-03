@@ -1,8 +1,21 @@
+.bold { font-weight : bold; }
+.font16{font-size: 16px;}
+.font20{font-size: 20px;}
+
 .flex { display : flex }
 .flexAl-center { display: flex; align-items: center;}
 .flex-column {  display: flex; flex-direction: column;}
 .mR10 { margin-right: 10px;}
-.mL10 { margin-left: 10px;}
-.mT10 { margin-top: 10px;}
+
+
 .linkstyle { text-decoration: none; color : inherit}
 .svgicon { width : 25px; height: 25px;}
+.curP { cursor: pointer;}
+
+.mL10 { margin-left: 10px;}
+.mL20 { margin-left: 20px;}
+.mL30 { margin-left: 30px;}
+
+.mT10 { margin-top: 10px;}
+.mT20 { margin-top: 20px;}
+.mT30 { margin-top: 30px;}

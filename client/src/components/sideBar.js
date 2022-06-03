@@ -42,12 +42,14 @@ function SideBar()
 	}
 	return (
 		 <div className="pro-sidebar flex-column">
-			
-			<main className="pro-sidebar__optioncontainer">
+			<header>
+				<div className="bold font16">Shathath</div>
+			</header>
+			<section className="pro-sidebar__optioncontainer">
 			 	
 				{ renderOptions() }
 			
-			</main>
+			</section>
 
 		 </div>
 	)
