@@ -1,23 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import { Fragment ,useEffect } from "react";
 
-import useProjects from './hooks/useProjects';
+import { Provider, useDispatch, useSelector } from "react-redux";
+
+import { fetchProjects } from "./features/projectSlice";
+
 
 function Projects()
 {
-	const projects = useProjects();
+	const dispatch = useDispatch();
 
-	const renderProjects = function()
+	const projects = useSelector((state) => state.projects);
+
+	const isLoading = useSelector((state) => state.isloading);
+
+	useEffect(()=>
 	{
-		if(projects.length > 0)
-		{
-			return projects.map((project) => 
-			{
-				return <div>{project.name}</div>
-			})
-		}
-		return "";
-	}
-	return renderProjects();
-}
+		dispatch( fetchProjects() )
+	},
+	[])
 
-export default Projects;
+	return (<Fragment>
+		{ isLoading ? <h1>Loading</h1> : <h1>Proj</h1> }
+	</Fragment> )
+}
+export default Projects
