@@ -24,7 +24,11 @@ function Projects()
 		<Fragment>
 			<main className="pro-container--main">
 
-				<header className="bold mL10 mL30 mT30 font20">My Projects</header>
+				<header className="flex bold mL30 mT30 font20">
+
+					<div>My Projects</div>
+					<button>Add Project</button>
+				</header>
 
 				<section className="mL30 mT20 flex">
 					{ isLoading ? <h2>Loading....</h2> :
