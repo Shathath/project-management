@@ -8,9 +8,10 @@ import DashBoard from './dashboard';
 
 import Projects from './projects';
 
-import './component.css';
-
 import './common.css'
+
+import './components/component.css';
+
 
 function ProjectManagement() 
 {

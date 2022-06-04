@@ -1,16 +1,22 @@
 .bold { font-weight : bold; }
+.font14{ font-size: 14px;}
 .font16{font-size: 16px;}
 .font20{font-size: 20px;}
 
+/* flex */
 .flex { display : flex }
 .flexAl-center { display: flex; align-items: center;}
 .flex-column {  display: flex; flex-direction: column;}
-.mR10 { margin-right: 10px;}
+.jc-spacebtwn { justify-content: space-between;}
+.al-center { align-items: center;}
 
 
 .linkstyle { text-decoration: none; color : inherit}
 .svgicon { width : 25px; height: 25px;}
 .curP { cursor: pointer;}
+
+/* margin right */
+.mR10 { margin-right: 10px;}
 
 .mL10 { margin-left: 10px;}
 .mL20 { margin-left: 20px;}
@@ -19,3 +25,6 @@
 .mT10 { margin-top: 10px;}
 .mT20 { margin-top: 20px;}
 .mT30 { margin-top: 30px;}
+
+label.required:after { content:" * "; color:red;}
+.btn-cancel { background: #f7f7f7;}

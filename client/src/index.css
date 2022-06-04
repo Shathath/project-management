@@ -9,10 +9,9 @@ code {
     monospace;
 }
 
-html { font-family: 'Jost', sans-serif; }
+html,body, button { font-family: 'Jost', sans-serif; }
 
-.pro-container
-{
+.pro-container{
 	width : 100%;
 	height: 100vh;
 	display: flex;

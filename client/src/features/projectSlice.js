@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
 
+import axios from 'axios'
 
 const initialState = 
 {
@@ -11,10 +11,17 @@ const initialState =
 
 export const fetchProjects = createAsyncThunk('projects/getprojects', async(thunAPI) =>
 {
-	const projects =  await axios('http://localhost:8000/getallprojects');
+	const projects =  await axios.get('http://localhost:8000/getallprojects');
 
 	return projects.data;
 })
+
+export const createProject = createAsyncThunk('projects/createproject', async(name) => 
+{
+	const project = await axios.post('http://localhost:8000/createproject', { name : name, id : 1 } );
+
+	return project.data;
+});
 
 export const projectSlice = createSlice(
  {
@@ -41,14 +48,32 @@ export const projectSlice = createSlice(
 		{
 			state.isloading = false;
 
-			console.log( payload.data );
 			state.projects = payload.data;
 		},
 
 		[ fetchProjects.rejected ] : ( state ) => 
+		
 		{
 			state.isloading = false;
-		}
+		},
+
+		[ createProject.pending ] : (state,action) => 
+		{
+			state.isloading = true	 
+		},
+
+		[ createProject.fulfilled ] : ( state, { payload } ) => 
+		{
+			state.isloading = false;
+
+			state.projects.concat(payload.data);
+		},
+
+		[ createProject.rejected ] : ( state ) => 
+		
+		{
+			state.isloading = false;
+		},
 	}
   ,
 })

@@ -26,7 +26,7 @@ var getProject = function( req, res )
 	})
 }
 
-var createProjects =  function( req, res )
+var createProject =  function( req, res )
 {
 	var { name, created_by } = req.body;
 
@@ -43,4 +43,4 @@ var createProjects =  function( req, res )
 	})
 }
 
-module.exports = { getAllProjects, createProjects, getProject }
+module.exports = { getAllProjects, createProject, getProject }

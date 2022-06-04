@@ -8,6 +8,6 @@ projectsRouter.get('/getproject', projectsController.getProject);
 
 projectsRouter.get('/getallprojects', projectsController.getAllProjects);
 
-projectsRouter.post('/createproject', projectsController.createProjects);
+projectsRouter.post('/createproject', projectsController.createProject);
 
 module.exports = projectsRouter;

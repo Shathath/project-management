@@ -2,19 +2,28 @@
 
 const { db } = require('../model/db');
 
-var createUser = function(req,res)
+const Utils = require('../Utils');
+
+var createUser = async function(req,res)
 {
-	const { name, email, designation } = req.body;
+	const { name, email, designation, password } = req.body;
+
+	if( !password  || !name ) 
+	{
+		return res.status(200).json({ error: "Enter mandatory fields!!!"})
+	}
+
+	var hashedPassword = await Utils.generatePassword( password );
 
 	db.query(
  		
-		"insert into users( user_name, email, designation_id ) VALUES($1,$2,$3) RETURNING *", [ name, email, designation ],
+		"insert into users( user_name, email, designation_id, password ) VALUES($1,$2,$3,$4) RETURNING *", [ name, email, designation, hashedPassword ],
 		
 		function( error, dbResponse) 
 		{	
 			if( error )
 			{
-				res.status(400).json({ message : "Error when creating", error :  error.message })
+				res.status(500).json({error : error.message});
 
 				return;
 			}
@@ -32,14 +41,36 @@ var getUser = function(req,res)
 	{
 		if( error )
 		{
-			res.status(400).json( { message : 'Not able to found'});
+			res.status(500).json({error : error.message});
+			
+			return;
+		}
+
+		res.status(200).json( { data: dbresponse.rows } )
+	})
+}
+
+var userLogin = function( req, res ) 
+{
+	var { email, password : userPassword } = req.params;
+
+	db.query(`select * from users where email=${email}`, function( error, dbResponse) 
+	{
+		if(error)
+		{
+			res.status(500).json({error : error.message});
 
 			return;
 		}
 
-		res.status(200).json( dbresponse )
-		
-		db.end();
+		var { password }  = dbResponse.rows[0];
+
+		if( Utils.isPasswordMatch( password, userPassword )) 
+		{
+			res.status(200).json( { data: dbResponse.rows });
+
+			return;
+		}
 	})
 }
 
@@ -64,5 +95,6 @@ module.exports =
 {
 	createUser,
 	getUser,
-	getAllUsers
+	getAllUsers,
+	userLogin
 }
