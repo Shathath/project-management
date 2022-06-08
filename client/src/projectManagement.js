@@ -8,6 +8,8 @@ import DashBoard from './dashboard';
 
 import Projects from './projects';
 
+import ProjectsTaskList from './projectsTaskList';
+
 import './common.css'
 
 import './components/component.css';
@@ -21,12 +23,12 @@ function ProjectManagement()
 				<SideBar />
 				<Routes>
 					<Route path="dashboard" element={<DashBoard />}></Route>
-					<Route path="projects" element={<Projects />}></Route>
+					<Route path="projects" exact element={<Projects />}></Route>
+					<Route path="projects/:id" element={<ProjectsTaskList />}></Route>
 				</Routes>
 			</BrowserRouter>
 		</div>
 		 
 	)
 }
-
 export default ProjectManagement

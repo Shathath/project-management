@@ -4,9 +4,13 @@ import axios from 'axios'
 
 const initialState = 
 {
-  isloading: false,
+  isFetching: false,
+
+  isLoading :  false,
 
   projects : [],
+
+  projectsVsTasks : {}
 }
 
 export const fetchProjects = createAsyncThunk('projects/getprojects', async(thunAPI) =>
@@ -23,9 +27,15 @@ export const createProject = createAsyncThunk('projects/createproject', async(na
 	return project.data;
 });
 
+export const fetchTasksByProjectId = createAsyncThunk('projects/gettasks', async(id) => 
+{
+	const tasks = await axios.get(`http://localhost:8000/getprojecttasks/${id}`);
+
+	return tasks.data;
+})
+
 export const projectSlice = createSlice(
  {
-  
 	name: 'projects',
   
 	initialState,
@@ -41,38 +51,55 @@ export const projectSlice = createSlice(
 	{
 		[ fetchProjects.pending ] : (state,action) =>
 		{
-			state.isloading = true
+			state.isFetching = true
 		},
 
 		[ fetchProjects.fulfilled ] : ( state, { payload } ) => 
 		{
-			state.isloading = false;
+			state.isFetching = false;
 
 			state.projects = payload.data;
 		},
 
 		[ fetchProjects.rejected ] : ( state ) => 
-		
 		{
-			state.isloading = false;
+			state.isFetching = false;
 		},
 
 		[ createProject.pending ] : (state,action) => 
 		{
-			state.isloading = true	 
+			state.isLoading = true	 
 		},
 
 		[ createProject.fulfilled ] : ( state, { payload } ) => 
 		{
-			state.isloading = false;
+			state.isLoading = false;
 
-			state.projects.concat(payload.data);
+			state.projects = state.projects.concat(payload.data);
 		},
 
 		[ createProject.rejected ] : ( state ) => 
-		
 		{
-			state.isloading = false;
+			state.isLoading = false;
+		},
+	
+		[ fetchTasksByProjectId.pending ] : (state,action) => 
+		{
+			state.isLoading = true;
+		},
+
+		[ fetchTasksByProjectId.fulfilled ] : ( state, { payload } ) => 
+		{
+			state.isLoading = false;
+
+			const { data } = payload;
+
+			state.projectsVsTasks[ data[0].project_id ] = data;
+		},
+
+		[ fetchTasksByProjectId.rejected ] : ( state ) => 
+		{
+			state.isLoading = false;
 		},
 	}
   ,

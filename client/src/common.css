@@ -9,7 +9,7 @@
 .flex-column {  display: flex; flex-direction: column;}
 .jc-spacebtwn { justify-content: space-between;}
 .al-center { align-items: center;}
-
+.flx-wrap { flex-wrap: wrap;}
 
 .linkstyle { text-decoration: none; color : inherit}
 .svgicon { width : 25px; height: 25px;}
@@ -25,6 +25,8 @@
 .mT10 { margin-top: 10px;}
 .mT20 { margin-top: 20px;}
 .mT30 { margin-top: 30px;}
+
+.m20 { margin: 20px;}
 
 label.required:after { content:" * "; color:red;}
 .btn-cancel { background: #f7f7f7;}

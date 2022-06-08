@@ -2,6 +2,8 @@ import React, { Fragment ,useEffect, useState } from "react";
 
 import {  useDispatch, useSelector } from "react-redux";
 
+import {Link} from "react-router-dom";
+
 import Card from "./components/cardComponent";
 
 import ModalCard from "./components/ModalCard";
@@ -10,21 +12,31 @@ import CreateProjectModal from "./createProjectPage";
 
 import { fetchProjects } from "./features/projectSlice";
 
+let isInitialized = false;
+
 function Projects()
 {
 	const dispatch = useDispatch();
 
 	const projects = useSelector((state) => state.projects);
 
-	const isLoading = useSelector((state) => state.isloading);
+	const isFetching = useSelector((state) => state.isFetching);
 
 	const [ isCreateModalOpen, setIsCreateModal ] = useState(false)
 
 	useEffect(()=>
 	{
-		dispatch( fetchProjects() )
+		if( !isInitialized )
+		{
+			dispatch( fetchProjects() )
+		}
+
+		isInitialized = true;
 	},
-	[])
+	[ projects ])
+
+
+
 
 	const openProjectCreateModal = () => 
 	{
@@ -44,15 +56,15 @@ function Projects()
 				
 				</header>
 
-				<section className="mL30 mT20 flex">
+				<section className="mL30 mT20 flex flx-wrap">
 
-					{ isLoading ? 
+					{ isFetching ? 
 						
 						<h2>Loading....</h2> :
 						
 						projects.length > 0 && projects.map((project) => 
 						{
-							return <Card type="nameonly" value={project.name} /> 
+							return <Link to={`/projects/${project.project_id}`} key={project.project_id}><Card type="nameonly" value={project.name} /></Link>
 						})  
 					}
 				</section>
