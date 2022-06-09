@@ -8,3 +8,5 @@
 
 .btn-md { width : 120px; height: 40px; padding: 8px; border : none; color: #fff;}
 .btn-create { background: #1DC690;}
+
+.pmt-emptyscreen { background-image: url('../images/emptyscreen.png');}
