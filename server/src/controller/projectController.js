@@ -24,12 +24,12 @@ var getTaskByProject = function( req, res )
 {
 	const { id } = req.params;
 
-	db.query( `select * from tasks where project_id=${id}`, function( error, dbResponse)
+	db.query( `select * from tasks left join ( select users.user_name, users.user_id from users ) users on tasks.created_by = users.user_id where project_id=${id}`, function( error, dbResponse)
 	{
 		if( error ) return res.json({ message : error.message});
 
 		console.log( dbResponse.rows );
-		
+
 		res.status(200).json({ data : dbResponse.rows });
 	})
 }

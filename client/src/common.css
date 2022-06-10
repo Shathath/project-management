@@ -28,5 +28,11 @@
 
 .m20 { margin: 20px;}
 
+.p5 { padding: 5px;}
+
 label.required:after { content:" * "; color:red;}
 .btn-cancel { background: #f7f7f7;}
+
+.textE { text-align: end;}
+.textC { text-align: center;}
+.border1 { border: 1px solid #f7f7f7}
