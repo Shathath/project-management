@@ -30,8 +30,15 @@ create table tasks
 	description varchar(2064) not null,
 	priority varchar(24) not null,
 	assigned_to varchar(2064) null,
+	status varchar(100) not null,
 	project_id bigint references projects(project_id),
 	created_by bigint references users(user_id)
 	duedate TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+)
+
+create table status
+(
+	status_id serial primary key,
+	name varchar(100) not null
 )

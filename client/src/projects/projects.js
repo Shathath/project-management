@@ -4,13 +4,13 @@ import {  useDispatch, useSelector } from "react-redux";
 
 import {Link} from "react-router-dom";
 
-import Card from "./components/cardComponent";
+import Card from "../components/cardComponent";
 
-import ModalCard from "./components/ModalCard";
+import ModalCard from "../components/ModalCard";
 
 import CreateProjectModal from "./createProjectPage";
 
-import { fetchProjects } from "./features/projectSlice";
+import { fetchProjects } from "../features/projectSlice";
 
 let isInitialized = false;
 

@@ -29,6 +29,7 @@
 .m20 { margin: 20px;}
 
 .p5 { padding: 5px;}
+.p8 { padding: 8px;}
 
 label.required:after { content:" * "; color:red;}
 .btn-cancel { background: #f7f7f7;}
@@ -36,3 +37,8 @@ label.required:after { content:" * "; color:red;}
 .textE { text-align: end;}
 .textC { text-align: center;}
 .border1 { border: 1px solid #f7f7f7}
+
+.cm-dropdown {  width: 150px; }
+.cm-dropdown button { border: 1px solid #f7f7f7 !important}
+
+.pmt--low{ background : mediumspringgreen; border-radius: 50%; width: 10px; height : 10px }

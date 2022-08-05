@@ -2,11 +2,15 @@ import React, {useEffect, useState} from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
 
-import { fetchProjects, fetchTasksByProjectId } from './features/projectSlice';
+import { fetchProjects, fetchTasksByProjectId } from '../features/projectSlice';
 
 import { useParams } from 'react-router-dom';
 
-import EmptyScreen from './components/emptyScreen';
+import EmptyScreen from '../components/emptyScreen';
+
+import ModalCard from '../components/ModalCard';
+
+import CreateTaskModal from '../tasks/createTaskModal';
 
 function ProjectsTaskList()
 {
@@ -19,6 +23,8 @@ function ProjectsTaskList()
 	const projects  = useSelector((state) => state.projects );
 
 	const isLoading = useSelector((state) => state.isLoading );
+
+	const [ isModalOpened, setOpenModal ] = useState(false);
 
 	useEffect(() => 
 	{
@@ -88,13 +94,21 @@ function ProjectsTaskList()
 
 	const renderTaskAddButton = () => 
 	{
-		return <div className="col-3 textE"><button className="btn-md btn-create bold font14 curP">Add Task</button></div>
+		return <div className="col-3 textE"><button className="btn-md btn-create bold font14 curP" onClick={()=>setOpenModal(true)}>Add Task</button></div>
+	}
+
+	const renderCreateFields = () => 
+	{
+		return <form className="row g-3">
+					<header className="bold">Create Project</header>
+				</form>
 	}
 
 	return (
 		<React.Fragment>
 			{ 
 				isLoading ? <h1>Loading</h1> : 
+				<>
 				<section className="container">
 					<div className="row mT30">
 						{ renderProjectName() }
@@ -106,6 +120,8 @@ function ProjectsTaskList()
 						{ renderProjectTaskList() }
 					</div>
 				</section>
+					{ isModalOpened ? <ModalCard isOpen={isModalOpened} closeModal={()=>setOpenModal(false)}><CreateTaskModal/></ModalCard> : "" }
+				</>
 			}	   
 		</React.Fragment>
 	)

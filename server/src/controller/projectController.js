@@ -40,10 +40,24 @@ var createProject =  function( req, res )
 
 	db.query(`insert into projects(name,created_by) values($1,$2) returning *`, [name, created_by], function(error, dbResponse)
 	{
-		if(error) return	res.status(400).json({ error : error.message});
+		if(error) return res.status(400).json({ error : error.message});
 
 		res.status(201).json( { data : dbResponse.rows })
 	})
 }
 
-module.exports = { getAllProjects, createProject, getProject,getTaskByProject }
+var getProjectsByLimit = function(req, res)
+{
+	var { page_no : page_no, limit }  = req.body;
+
+	page_no = page_no > 1 ?  ( page_no - 1 ) * limit : 0;
+
+	db.query(`select * from projects limit $1 offset $2`, [ limit , page_no ], function(error, dbResponse) 
+	{
+		if(error) return res.status(400).json({error : error.message});
+
+		res.status(200).json({data: dbResponse.rows });
+	})
+}
+
+module.exports = { getAllProjects, createProject, getProject,getTaskByProject, getProjectsByLimit }

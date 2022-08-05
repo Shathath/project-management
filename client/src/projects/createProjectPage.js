@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ClientUtils } from './Utils/utils';
-import { createProject } from './features/projectSlice'
+import { ClientUtils } from '../Utils/utils';
+import { createProject } from '../features/projectSlice'
 
 
 function CreateProjectModal( props ) 

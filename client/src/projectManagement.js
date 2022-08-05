@@ -6,9 +6,9 @@ import SideBar from './components/sideBar';
 
 import DashBoard from './dashboard';
 
-import Projects from './projects';
+import Projects from './projects/projects';
 
-import ProjectsTaskList from './projectsTaskList';
+import ProjectsTaskList from './projects/projectsTaskList';
 
 import './common.css'
 
