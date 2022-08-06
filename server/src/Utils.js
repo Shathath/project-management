@@ -11,6 +11,10 @@ const isPasswordMatch = async function( userPassword, dbPassword )
 	return await bcrypt.compare( userPassword, dbPassword );
 }
 
+const isEmptyString = function( str )
+{
+	return typeof str !=="undefined" && str !== null  && typeof str == "string" && str.trim().length == 0;
+}
 
 
-module.exports = {  generatePassword, isPasswordMatch }
+module.exports = {  generatePassword, isPasswordMatch, isEmptyString }

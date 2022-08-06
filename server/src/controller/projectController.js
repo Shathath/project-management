@@ -1,5 +1,7 @@
 const { db } = require('../model/db');
 
+const { isEmptyString } = require('../Utils');
+
 var getAllProjects  = function( req, res )
 {
 	db.query('select * from projects', function(error, dbResponse) 
@@ -46,11 +48,28 @@ var createProject =  function( req, res )
 	})
 }
 
+
 var getProjectsByLimit = function(req, res)
 {
-	var { page_no : page_no, limit }  = req.body;
+	let hasSearch, hasPagination, hasLimit = false;
+
+	var { page_no : page_no, limit, search : searchText  }  = req.body;
 
 	page_no = page_no > 1 ?  ( page_no - 1 ) * limit : 0;
+
+	if( !isEmptyString( searchText ) ) { hasSearch = true;  }
+
+	if( hasSearch ) 
+	{
+		db.query(`select * from projects where name like $1 limit $2 offset $3`, [ `%${searchText}%`, limit , page_no ], function(error, dbResponse) 
+		{
+			if(error) return res.status(400).json({error : error.message});
+	
+			res.status(200).json({data: dbResponse.rows });
+		})
+
+		return;
+	}
 
 	db.query(`select * from projects limit $1 offset $2`, [ limit , page_no ], function(error, dbResponse) 
 	{
