@@ -37,6 +37,6 @@ function ProjectsTaskList()
 
 	},[]);
 
-	return()
+	return <></>
 
 export default ProjectsTaskList;
