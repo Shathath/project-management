@@ -18,15 +18,21 @@ import './components/component.css';
 function ProjectManagement() 
 {
 	return (
-		<div className="pro-container">		
-			<BrowserRouter>
-				<SideBar />
-				<Routes>
-					<Route path="dashboard" element={<DashBoard />}></Route>
-					<Route path="projects" exact element={<Projects />}></Route>
-					<Route path="projects/:id" element={<ProjectsTaskList />}></Route>
-				</Routes>
-			</BrowserRouter>
+		<div className="container-fluid" style={{height: "100vh"}}>		
+			<div className='row' style={{height: "100vh"}}>
+				<div className='col col-lg-2 border border-dark border-top-0'>
+					<SideBar />
+				</div>
+				<div className='col'>
+					<main>
+						<Routes>
+							<Route path="/" element={<DashBoard />}></Route>
+							<Route path="projects" exact element={<Projects />}></Route>
+							<Route path="projects/:id" element={<ProjectsTaskList />}></Route>
+						</Routes>
+					</main>
+				</div>
+			</div>
 		</div>
 		 
 	)

@@ -46,7 +46,7 @@ function Projects()
 	return (
 		<Fragment>
 
-			<main className="pro-container--main">
+			<main>
 
 				<header className="flex bold mL30 mT30 font20 jc-spacebtwn al-center">
 

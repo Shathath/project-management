@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import SvgIcon from '../svgicon';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function SideBar()
 {
@@ -29,29 +29,21 @@ function SideBar()
 		{
 			return <nav className="pro-sidebar__list mT10" key={option.name}>
 						
-						<Link to={option.route} className="flexAl-center linkstyle">
+						<NavLink activeClassName="activetab" to={option.route} className="flexAl-center linkstyle">
 
 							{option.iconName ? <SvgIcon name={option.iconName} /> : "" }
 
 							<div className="mL10">{option.name}</div>
 
-						</Link>
+						</NavLink>
 				  </nav>
 						
 		})
 	}
 	return (
-		 <div className="pro-sidebar flex-column">
-			<header>
-				<div className="bold font16">Shathath</div>
-			</header>
-			<section className="pro-sidebar__optioncontainer">
-			 	
+		 <section className="">
 				{ renderOptions() }
-			
-			</section>
-
-		 </div>
+		 </section>
 	)
 }
 
