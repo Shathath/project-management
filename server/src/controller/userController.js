@@ -6,18 +6,18 @@ const Utils = require('../Utils');
 
 var createUser = async function(req,res)
 {
-	const { name, email, designation, password } = req.body;
+	const { name, email, designation } = req.body;
 
-	if( !password  || !name ) 
+	if( !name ) 
 	{
 		return res.status(200).json({ error: "Enter mandatory fields!!!"})
 	}
 
-	var hashedPassword = await Utils.generatePassword( password );
+	//var hashedPassword = await Utils.generatePassword( password );
 
 	db.query(
  		
-		"insert into users( user_name, email, designation_id, password ) VALUES($1,$2,$3,$4) RETURNING *", [ name, email, designation, hashedPassword ],
+		"insert into users( user_name, email, designation_id ) VALUES($1,$2,$3) RETURNING *", [ name, email, designation ],
 		
 		function( error, dbResponse) 
 		{	
@@ -50,45 +50,54 @@ var getUser = function(req,res)
 	})
 }
 
-var userLogin = function( req, res ) 
+const userLogin = async function( req, res ) 
 {
 	var { email, password : userPassword } = req.params;
 
-	db.query(`select * from users where email=${email}`, function( error, dbResponse) 
+	try 
 	{
-		if(error)
-		{
-			res.status(500).json({error : error.message});
-
-			return;
-		}
-
-		var { password }  = dbResponse.rows[0];
-
-		if( Utils.isPasswordMatch( password, userPassword )) 
-		{
-			res.status(200).json( { data: dbResponse.rows });
-
-			return;
-		}
-	})
+		const { rows } = await db.query('SELECT * FROM users WHERE email=$1 AND password=$2', [ email, password ]);
+		
+		res.status( 200 ).json( { status: "success", data : rows })
+	}
+	catch(error)
+	{
+		res.status(400).json( { error : 'Not able to connect data model'});
+	}
 }
 
-var getAllUsers = function( req, res ) 
+const getAllUsers = async function( req, res ) 
 {
-	db.query('select * from users', function( error, dbresponse )
+	try 
 	{
-		if( error ) 
-		{
-			res.status(400).json( { message : 'Not able to get Users'})
+		const { rows } = await db.query('SELECT * FROM users');
 
-			return;
-		}
+		res.status(200).json({ status : "success", data : rows });
+	}
+	catch(error){
+		 
+		res.status(400).json({ message : 'Not able to get Users'});
+	}
+}
 
-		res.status(200).json( dbresponse )
+const usersByDesignation = async function( req, res )
+{
+	const { id } = req.params;
+
+	try
+	{
+		const { rows } = await db.query(`SELECT * FROM USERS WHERE DESIGNATION_ID = $1`, [id]);
+
+		res.status(200).json( { data : rows });
+	}
+	catch(error)
+	{
+		res.status(400).json( { message : 'Not able to get Users'});
+	}
+	finally
+	{
 		
-		db.end();
-	})
+	}
 }
 
 module.exports = 
@@ -96,5 +105,6 @@ module.exports =
 	createUser,
 	getUser,
 	getAllUsers,
-	userLogin
+	userLogin,
+	usersByDesignation
 }
