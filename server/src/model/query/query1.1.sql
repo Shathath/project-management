@@ -42,3 +42,10 @@ create table status
 	status_id serial primary key,
 	name varchar(100) not null
 )
+
+
+create table projectsusersmap
+(
+	project_id bigint references projects(project_id),
+	user_id int references users(user_id)
+)

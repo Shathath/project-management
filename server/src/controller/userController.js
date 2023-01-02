@@ -1,8 +1,4 @@
-
-
 const { db } = require('../model/db');
-
-const Utils = require('../Utils');
 
 var createUser = async function(req,res)
 {

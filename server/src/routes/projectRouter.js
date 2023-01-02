@@ -14,4 +14,8 @@ projectsRouter.get('/getprojecttasks/:id', projectsController.getTaskByProject);
 
 projectsRouter.get('/fetchprojects', projectsController.getProjectsByLimit );
 
+projectsRouter.get('/projects/:id/users', projectsController.getProjectUsers );
+
+projectsRouter.post('/projects/users', projectsController.addUsersToProject );
+
 module.exports = projectsRouter;

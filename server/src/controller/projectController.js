@@ -30,8 +30,6 @@ var getTaskByProject = function( req, res )
 	{
 		if( error ) return res.json({ message : error.message});
 
-		console.log( dbResponse.rows );
-
 		res.status(200).json({ data : dbResponse.rows });
 	})
 }
@@ -79,4 +77,39 @@ var getProjectsByLimit = function(req, res)
 	})
 }
 
-module.exports = { getAllProjects, createProject, getProject,getTaskByProject, getProjectsByLimit }
+const getProjectUsers = async function( req, res )
+{
+	let { id } = req.params;
+
+	try 
+	{
+		const { rows } =  await db.query(`SELECT * FROM projectsusersmap 
+											LEFT JOIN projects ON projects.project_id = $1
+											LEFT JOIN users u ON u.user_id = projectsusersmap.user_id
+										`, [ id ] );
+
+		res.status(200).json({ status : "success", data : rows })
+	}
+	catch( error )
+	{
+		res.status(202).json({ status : "Failed", msg  : error})
+	}
+}
+
+const addUsersToProject = async function( req, res ) 
+{
+	let { project_id, users_id } = req.body;
+
+	try 
+	{
+		const { rows } =  await db.query('INSERT INTO projectsusersmap(project_id, user_id) values($1,$2) RETURNING *', [ project_id, users_id ] );
+
+		res.status(200).json({ status : "success", data : rows })
+	}
+	catch(error)
+	{
+		res.status(202).json({ status : "Failed", msg  : error})
+	}
+}
+
+module.exports = { getAllProjects, createProject, getProject,getTaskByProject, getProjectsByLimit, getProjectUsers, addUsersToProject }
