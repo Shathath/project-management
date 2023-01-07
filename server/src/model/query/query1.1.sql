@@ -29,10 +29,9 @@ create table tasks
 	task_name varchar(265) not null,
 	description varchar(2064) not null,
 	priority varchar(24) not null,
-	assigned_to varchar(2064) null,
-	status varchar(100) not null,
+	status int references status(status_id),
 	project_id bigint references projects(project_id),
-	created_by bigint references users(user_id)
+	created_by bigint references users(user_id),
 	duedate TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
@@ -48,4 +47,10 @@ create table projectsusersmap
 (
 	project_id bigint references projects(project_id),
 	user_id int references users(user_id)
+)
+
+create table tasksusersmap
+(
+	task_id int references tasks(task_id),
+	user_id int references users(users_id)
 )
