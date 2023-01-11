@@ -25,20 +25,20 @@ var createTask = async function(req,res)
 	}
 }
 
-var getTask = function(req,res)
+var getTask =async function(req,res)
 {
 	var { id } = req.params;
 
-	db.query(`select * from tasks where task_id=${id} `, function(error,dbresponse)
-	{
-		if( error ) 
-		{
-			res.status(500).json({ error : 'Not able to query db '});
+	const { rows, error } = await db.query(`SELECT * FROM tasks WHERE task_id=$1`, [id] );
 
-			return;
-		}
-		res.status(200).json( dbresponse )
-	})
+	if( error ) 
+	{
+		res.status(500).json({ error : 'Not able to query db '});
+
+		return;
+	}
+	res.status(200).json( { status : "success", data : rows} )
+	
 }
 
 var getAllTasks = function( req, res ) 
