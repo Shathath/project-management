@@ -4,11 +4,19 @@ var createTask = async function(req,res)
 {
 	const { task_name, description, assigned_to, status, duedate, priority, created_by, project_id } = req.body;
 
-	console.log( 'TASK', task_name );
-
 	try 
 	{
 		const { rows, error  } = await db.query("INSERT INTO tasks(task_name, description, status, duedate, priority, created_by, project_id) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING * ",[task_name, description, status, duedate, priority, created_by, project_id])
+
+		if( error ) 
+		{
+			res.status( 500 ).json(
+				{
+					status : 'FAILED',
+		
+					error : 'Not able to QUERY DB'
+				})
+		}
 
 		assigned_to.split(',').forEach((val) => 
 		{
@@ -25,7 +33,7 @@ var createTask = async function(req,res)
 	}
 }
 
-var getTask =async function(req,res)
+var getTask = async function(req,res)
 {
 	var { id } = req.params;
 
@@ -37,23 +45,24 @@ var getTask =async function(req,res)
 
 		return;
 	}
-	res.status(200).json( { status : "success", data : rows} )
-	
+	res.status(200).json( { status : "success", data : rows} );
 }
 
-var getAllTasks = function( req, res ) 
+var getAllTasks = async function( req, res ) 
 {
-	db.query('select * from tasks', function( error, dbResponse )
+	const { rows, error } = await db.query(`SELECT * FROM tasks`);
+
+	if( error )
 	{
-		if( error ) 
+		res.status( 500 ).json(
 		{
-			res.status(500).json({ error : 'Not able to query db '});
+			status : 'FAILED',
 
-			return;
-		}
+			error : 'Not able to QUERY DB'
+		})
+	}
 
-		res.status(200).json( { data : dbResponse.rows} )
-	})
+	res.status(200).json( { status  : "success", data : rows } )
 }
 
 module.exports = { 
