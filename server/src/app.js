@@ -52,6 +52,6 @@ app.use('/v1/designations', designationRouter );
 
 app.use('/v1/projects', projectRouter );
 
-app.use('/v1/modules', moduleRouter)
+app.use('/v1/modules', moduleRouter);
 
 app.listen(PORT, ()=> console.log(`Server Listening at ${PORT}`));
