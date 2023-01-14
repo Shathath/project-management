@@ -1,5 +1,18 @@
 const { db } = require('../model/db');
 
+
+async function checkMandatoryFieldsForUserCreation( req, res, next ) 
+{
+	const { name, email, designation } = req.body;
+
+	if( !name || !email || !designation ) 
+	{
+		return res.status(400).json({ status : "FAILED", error : "Enter mandatory fields" });
+	}
+
+	next();
+}
+
 var createUser = async function(req,res)
 {
 	const { name, email, designation } = req.body;
@@ -8,8 +21,6 @@ var createUser = async function(req,res)
 	{
 		return res.status(200).json({ error: "Enter mandatory fields!!!"})
 	}
-
-	//var hashedPassword = await Utils.generatePassword( password );
 
 	db.query(
  		
@@ -102,5 +113,6 @@ module.exports =
 	getUser,
 	getAllUsers,
 	userLogin,
-	usersByDesignation
+	usersByDesignation,
+	checkMandatoryFieldsForUserCreation
 }

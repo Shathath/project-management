@@ -4,14 +4,18 @@ const userController = require('../controller/userController');
 
 const userRouter = express.Router();
 
-userRouter.get('/users/:id', userController.getUser);
+userRouter
+        .route('/')
 
-userRouter.get('/users', userController.getAllUsers);
+        .get( userController.getAllUsers )
 
-userRouter.post('/users', userController.createUser);
+        .post( userController.checkMandatoryFieldsForUserCreation, userController.createUser );
 
-userRouter.get('/users/designations/:id', userController.usersByDesignation)
 
-userRouter.get('/login', userController.createUser);
+userRouter
+        .route('/:id')
+
+        .get( userController.getUser )
+
 
 module.exports = userRouter;
