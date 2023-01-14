@@ -4,10 +4,20 @@ var taskController = require('../controller/taskController');
 
 var taskRouter = express.Router();
 
-taskRouter.get('/gettask/:id', taskController.getTask );
+taskRouter
+        .route('/')
 
-taskRouter.get('/getalltask', taskController.getAllTasks);
+        .get(  taskController.getAllTasks )
 
-taskRouter.post('/tasks', taskController.createTask);
+        .post( taskController.checkTaskCreateMandatoryFieldExists, taskController.createTask )
+
+
+taskRouter
+        .route('/:id')
+
+        .get( taskController.getTask )
+
+        .put( taskController.updateTask)
+        
 
 module.exports = taskRouter;
