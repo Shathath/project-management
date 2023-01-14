@@ -19,6 +19,8 @@ const designationRouter = require('./routes/designationRouter');
 
 const projectRouter =  require('./routes/projectRouter');
 
+const moduleRouter = require('./routes/moduleRouter')
+
 
 const PORT = 8000;
 
@@ -42,12 +44,14 @@ app.use(cors({origin: 'http://localhost:3000'}));
 
 app.use( express.json() );
 
-app.use( taskRouter );
+app.use('/v1/tasks' , taskRouter );
 
-app.use( userRouter );
+app.use('/v1/users', userRouter );
 
-app.use( designationRouter );
+app.use('/v1/designations', designationRouter );
 
-app.use( projectRouter );
+app.use('/v1/projects', projectRouter );
+
+app.use('/v1/modules', moduleRouter)
 
 app.listen(PORT, ()=> console.log(`Server Listening at ${PORT}`));

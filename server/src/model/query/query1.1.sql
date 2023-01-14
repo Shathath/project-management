@@ -32,6 +32,7 @@ create table tasks
 	status int references status(status_id),
 	project_id bigint references projects(project_id),
 	created_by bigint references users(user_id),
+	module_id int references modules(module_id)
 	duedate TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 )
@@ -42,6 +43,10 @@ create table status
 	name varchar(100) not null
 )
 
+create table modules(
+	module_id serial primary key,
+	name varchar(100) not null
+)
 
 create table projectsusersmap
 (
