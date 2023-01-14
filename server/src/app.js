@@ -1,15 +1,11 @@
 
 const express = require('express');
 
+require('dotenv').config( { path : "./config.env"});
+
+
 const cors = require('cors');
 
-require('dotenv').config();
-
-//const session = require("express-session");
-
-//const RedisStore = require("connect-redis")(session);
-
-//const redisClient = require("./helpers/redis")
 
 const taskRouter = require('./routes/taskRouter');
 
@@ -21,26 +17,11 @@ const projectRouter =  require('./routes/projectRouter');
 
 const moduleRouter = require('./routes/moduleRouter')
 
-
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 const app = express();
 
 app.use(cors({origin: 'http://localhost:3000'}));
-
-// const config = 
-// {
-// 	CLIENT_ID : process.env.CLIENT_ID,
-	
-// 	CLIENT_SECRET : process.env.CLIENT_SECRET
-// }
-
-// app.use( session({
-// 	store: new RedisStore({ client: redisClient }),
-//     saveUninitialized: false,
-//     secret: "keyboard cat",
-//     resave: false,
-// }))
 
 app.use( express.json() );
 
