@@ -65,7 +65,7 @@ var getAllTasks = async function( req, res )
 {
 	const queryParams = req.query;
 
-	const QUERY = `SELECT * FROM tasks`;
+	let QUERY = `SELECT * FROM tasks`;
 
 	let  finalQuery = "";
 
@@ -102,7 +102,7 @@ var getAllTasks = async function( req, res )
 		})
 	}
 
-	return res.status(200).json( { status  : "success", data : rows } );
+	res.status(200).json( { status  : "success", data : rows } );
 }
 
 async function updateTask( req, res ) 

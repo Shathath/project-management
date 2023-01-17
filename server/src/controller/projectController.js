@@ -2,50 +2,136 @@ const { db } = require('../model/db');
 
 const { isEmptyString } = require('../Utils');
 
-var getAllProjects  = function( req, res )
+var isRequestHasQueryString = function( req = {} ) 
 {
-	db.query('select * from projects', function(error, dbResponse) 
-	{
-		if(error) return res.json({ message : error.message});
-
-		res.status(200).json( {data : dbResponse.rows});
-	})
+	return req.hasOwnProperty( "query" );
 }
 
-var getProject = function( req, res )
+var getAllProjects  = async function( req, res )
 {
-	db.query( `select * from projects where project_id=${id}`, function( error, dbResponse)
-	{
-		if( error ) return res.json({ message : error.message});
+	let QUERY = 'SELECT * FROM projects';
 
-		res.status(200).json({ data : dbResponse.rows });
-	})
+	let values = [];
+	
+	if( isRequestHasQueryString( req ) ) 
+	{
+		var { filterQuery, values : filterValues } = getProjectsFilterQuery( req );
+
+		QUERY+=" "+filterQuery;
+
+		values = filterValues ;
+	}
+
+	const { rows, error } = await db.query( QUERY, values );
+
+	if( error  ) 
+	{
+		res.status( 400 ).json( {  status : "FAILED", error : "NOt able to execute query "});
+
+		return;
+	}
+
+	if( rows.length > 0 ) 
+	{
+		const { rows: taskRows } = await db.query("SELECT project_id, COUNT( * ) FROM tasks GROUP BY project_id");
+
+		rows.forEach((rowObj) => 
+		{
+			let matchedCountObj = taskRows.filter((taskObj) => taskObj.project_id == rowObj.project_id );
+
+			Object.assign( rowObj , matchedCountObj[0] )
+		})
+	}
+	res.status( 200 ).json({ data : rows });
 }
 
-var getTaskByProject = function( req, res )
+var getProject = async function( req, res )
+{
+	try 
+	{
+		const { rows, error } = await db.query('SELECT * FROM projects WHERE project_id=$1', [id ]);
+
+		if( error ) 
+		{
+			res.status( 500 ).json( { status : "FAILED", error : error });
+
+			return;
+		}
+
+		res.status(200).json({ data : rows });
+	}
+	catch(error)
+	{
+		res.status( 500 ).json( { status : "FAILED", error : error });
+	}
+}
+
+var getTaskByProject = async function( req, res )
 {
 	const { id } = req.params;
 
-	db.query( `select * from tasks left join ( select users.user_name, users.user_id from users ) users on tasks.created_by = users.user_id where project_id=${id}`, function( error, dbResponse)
-	{
-		if( error ) return res.json({ message : error.message});
+	const { rows, error } = await db.query(`SELECT * FROM tasks
+											LEFT JOIN
+											(SELECT users.user_name, users.user_id from users) users 
+											ON tasks.created_by = users.user_id
+											WHERE project_id=$1
+											`, [ id ]);
 
-		res.status(200).json({ data : dbResponse.rows });
-	})
+	if( error ) 
+	{
+		return res.status( 500 ).json( {  status : "FAILED", error  : error });
+	}
+
+	res.status( 201 ).json( { data :  rows }) ;
 }
 
-var createProject =  function( req, res )
+var createProject = async function( req, res )
 {
 	var { name, created_by } = req.body;
 
-	db.query(`insert into projects(name,created_by) values($1,$2) returning *`, [name, created_by], function(error, dbResponse)
-	{
-		if(error) return res.status(400).json({ error : error.message});
+	const  { rows, error }  = await db.query('INSERT INTO projects(name, created_by) VALUES($1, $2)', [ name, created_by ]);
 
-		res.status(201).json( { data : dbResponse.rows })
-	})
+	if( error ) 
+	{
+		return res.status( 500 ).json({ status  :"FAILED", error :  "NOT ABLE TO EXECUTE QUERY "});
+	}
+
+	res.status( 201 ).json( { status : "success", data :  rows });
 }
 
+
+var getProjectsFilterQuery  = function( req ) 
+{
+	let clause = " WHERE";
+
+	let finalQuery  = "";
+
+	let paramsLen = Object.keys(req.query).length;
+
+	console.log( paramsLen );
+
+	let values = [];
+
+	Object.keys( req.query ).forEach((key, index) => 
+	{
+		let dollarIndex = "$"+( index + 1 ); 
+
+		finalQuery +=` ${key}=${dollarIndex}`;
+
+		if( paramsLen - 1 !== index ) 
+		{
+			finalQuery +=" AND";
+		}
+
+		values.push( req.query[ key ] );
+	})
+
+	let query =  clause + finalQuery;
+
+	console.log( query, values );
+
+	return { filterQuery : query, values };
+}
 
 var getProjectsByLimit = function(req, res)
 {
