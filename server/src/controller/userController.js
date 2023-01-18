@@ -57,21 +57,6 @@ var getUser = function(req,res)
 	})
 }
 
-const userLogin = async function( req, res ) 
-{
-	var { email, password : userPassword } = req.params;
-
-	try 
-	{
-		const { rows } = await db.query('SELECT * FROM users WHERE email=$1 AND password=$2', [ email, password ]);
-		
-		res.status( 200 ).json( { status: "success", data : rows })
-	}
-	catch(error)
-	{
-		res.status(400).json( { error : 'Not able to connect data model'});
-	}
-}
 
 const getAllUsers = async function( req, res ) 
 {
@@ -112,7 +97,6 @@ module.exports =
 	createUser,
 	getUser,
 	getAllUsers,
-	userLogin,
 	usersByDesignation,
 	checkMandatoryFieldsForUserCreation
 }
