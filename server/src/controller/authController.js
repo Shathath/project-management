@@ -23,7 +23,7 @@ const userLogin = async function( req, res )
 
         if( error ) 
         {
-            return res.status( 500 ).json( { error : 'Failed'});
+            return res.status( 500 ).json( { error : 'Failed' });
         }
 
         if( rows.length > 0 ) 
@@ -35,13 +35,15 @@ const userLogin = async function( req, res )
                 return res.status( 500 ).json({ error : "Email or password is wrong" });
             }
 
+            delete rows[0].password;
+
             res.status( 200 ).json( { status: "success", data : rows })
         }
 		
 	}
 	catch(error)
 	{
-		res.status(400).json( { error : 'Not able to connect data model'});
+		res.status(400).json( { error : 'Not able to connect data model' });
 	}
 }
 
