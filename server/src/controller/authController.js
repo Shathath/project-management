@@ -1,5 +1,7 @@
 const { db }  = require('../model/db');
 
+const jwt = require('jsonwebtoken');
+
 const bcrypt = require('bcrypt');
 
 async function hashPassword( password )
@@ -13,6 +15,11 @@ async function comparePassword(plaintextPassword, hash )
 {
     return await bcrypt.compare(plaintextPassword, hash);
 }
+
+async function verifyToken(){
+
+}
+
 const userLogin = async function( req, res ) 
 {   
 	var { email, password : userPassword } = req.body;
@@ -55,19 +62,19 @@ const userSignUp = async function( req, res )
     {
         const hashedPasswd     = await hashPassword( password );;
 
-        const {  error  } = await db.query('INSERT INTO USERS(user_name,email,password) values($1,$2,$3)', [ name, email, hashedPasswd ]);
+        const { rows, error  } = await db.query('INSERT INTO USERS(user_name,email,password) values($1,$2,$3) RETURNING *', [ name, email, hashedPasswd ]);
 
         if( error ) 
         {
            return res.status( 500 ).json( {  status : "FAILED", error : error });
         }
 
-        res.status( 200 ).json( { status: "success", data : { name, email } })
+        const token = jwt.sign( rows[0].user_id, process.env.SECRET );
+
+        res.status( 200 ).json( { status: "success", token, data : { name, email } })
     }
     catch(error)
     {
-        console.log( error );
-
         res.status( 500 ).json( {  status : "FAILED", error : error });
     }
 }
