@@ -2,6 +2,8 @@ const { db }  = require('../model/db');
 
 const jwt = require('jsonwebtoken');
 
+const AppError = require('../helpers/appError');
+
 const bcrypt = require('bcrypt');
 
 async function hashPassword( password )
@@ -32,10 +34,9 @@ async function verifyUser( req, res, next )
         }
         else 
         {
-            return next("error")
+            return next(new AppError('User not found!', 401));
         }
     }
-
     next()
 }
 
