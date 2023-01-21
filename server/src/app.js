@@ -35,4 +35,29 @@ app.use('/v1/projects', projectRouter );
 
 app.use('/v1/modules', moduleRouter);
 
+app.all('*', (req,res,next) =>
+{
+    var error = new Error(`Can't find this route ${req.originalUrl} in this server!!!`);
+
+    error.status = "FAILED";
+
+    error.statusCode = 404;
+
+    next( error );
+})
+
+app.use((error, req, res, next)=>
+{
+    error.status  = error.status || 'FAILED';
+
+    error.statusCode = error.statusCode || 500;
+
+    res.status(404).json(
+    {
+        status : error.status,
+
+        message : error.message
+    })
+})
+
 app.listen(PORT, ()=> console.log(`Server Listening at ${PORT}`));
