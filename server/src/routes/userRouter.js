@@ -9,7 +9,7 @@ const userRouter = express.Router();
 userRouter
         .route('/')
 
-        .get( userController.getAllUsers )
+        .get( authController.verifyUser, userController.getAllUsers )
 
         .post( userController.checkMandatoryFieldsForUserCreation, userController.createUser );
 
