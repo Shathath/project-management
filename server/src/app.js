@@ -40,7 +40,6 @@ app.use('/v1/modules', moduleRouter);
 
 app.all('*', (req,res,next) =>
 {
-    console.log( "Check ")
     next( new AppError(`Can't find this route ${req.originalUrl} in this server!!!`), 404 );
 })
 

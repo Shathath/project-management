@@ -53,9 +53,7 @@ var getProject = async function( req, res )
 
 		if( error ) 
 		{
-			res.status( 500 ).json( { status : "FAILED", error : error });
-
-			return;
+			return new AppError(`Operation Failed! Something went wrong!!`, 500 );
 		}
 
 		res.status(200).json({ data : rows });
@@ -79,7 +77,7 @@ var getTaskByProject = async function( req, res )
 
 	if( error ) 
 	{
-		return res.status( 500 ).json( {  status : "FAILED", error  : error });
+		return new AppError(`Operation Failed! Something went wrong!!`, 500 );
 	}
 
 	res.status( 201 ).json( { data :  rows }) ;
@@ -93,7 +91,7 @@ var createProject = async function( req, res )
 
 	if( error ) 
 	{
-		return res.status( 500 ).json({ status  :"FAILED", error :  "NOT ABLE TO EXECUTE QUERY "});
+		return new AppError(`Operation Failed! Something went wrong!!`, 500 );
 	}
 
 	res.status( 201 ).json( { status : "success", data :  rows });
@@ -107,8 +105,6 @@ var getProjectsFilterQuery  = function( req )
 	let finalQuery  = "";
 
 	let paramsLen = Object.keys(req.query).length;
-
-	console.log( paramsLen );
 
 	let values = [];
 
@@ -127,8 +123,6 @@ var getProjectsFilterQuery  = function( req )
 	})
 
 	let query =  clause + finalQuery;
-
-	console.log( query, values );
 
 	return { filterQuery : query, values };
 }
@@ -169,10 +163,15 @@ const getProjectUsers = async function( req, res )
 
 	try 
 	{
-		const { rows } =  await db.query(`SELECT * FROM projectsusersmap 
+		const { rows, error  } =  await db.query(`SELECT * FROM projectsusersmap 
 											LEFT JOIN projects ON projects.project_id = $1
 											LEFT JOIN users u ON u.user_id = projectsusersmap.user_id
 										`, [ id ] );
+
+		if( error )
+		{
+			return new AppError(`Operation Failed! Something went wrong!!`, 500 );
+		}
 
 		res.status(200).json({ status : "success", data : rows })
 	}
