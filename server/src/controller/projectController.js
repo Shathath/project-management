@@ -2,6 +2,10 @@ const { db } = require('../model/db');
 
 const { isEmptyString } = require('../Utils');
 
+const AppError = require('../helpers/appError');
+
+const errorDefinitions = require('../helpers/errorDefinitions');
+
 var isRequestHasQueryString = function( req = {} ) 
 {
 	return req.hasOwnProperty( "query" );
@@ -22,27 +26,29 @@ var getAllProjects  = async function( req, res )
 		values = filterValues ;
 	}
 
-	const { rows, error } = await db.query( QUERY, values );
-
-	if( error  ) 
+	try 
 	{
-		res.status( 400 ).json( {  status : "FAILED", error : "NOt able to execute query "});
+		const { rows } = await db.query( QUERY, values );
 
-		return;
-	}
-
-	if( rows.length > 0 ) 
-	{
-		const { rows: taskRows } = await db.query("SELECT project_id, COUNT( * ) FROM tasks GROUP BY project_id");
-
-		rows.forEach((rowObj) => 
+		if( rows.length > 0 ) 
 		{
-			let matchedCountObj = taskRows.filter((taskObj) => taskObj.project_id == rowObj.project_id );
+			const { rows: taskRows } = await db.query("SELECT project_id, COUNT( * ) FROM tasks GROUP BY project_id");
 
-			Object.assign( rowObj , matchedCountObj[0] )
-		})
+			rows.forEach((rowObj) => 
+			{
+				let matchedCountObj = taskRows.filter((taskObj) => taskObj.project_id == rowObj.project_id );
+
+				Object.assign( rowObj , matchedCountObj[0] )
+			})
+		}
+		res.status( 200 ).json({ data : rows });
+
 	}
-	res.status( 200 ).json({ data : rows });
+	
+	catch(err)
+	{
+		return next( new AppError( errorDefinitions(err.code), 500 ) );
+	}
 }
 
 var getProject = async function( req, res )
@@ -58,9 +64,9 @@ var getProject = async function( req, res )
 
 		res.status(200).json({ data : rows });
 	}
-	catch(error)
+	catch(err)
 	{
-		res.status( 500 ).json( { status : "FAILED", error : error });
+		return next( new AppError( errorDefinitions(err.code), 500 ) );
 	}
 }
 
@@ -68,33 +74,39 @@ var getTaskByProject = async function( req, res )
 {
 	const { id } = req.params;
 
-	const { rows, error } = await db.query(`SELECT * FROM tasks
-											LEFT JOIN
-											(SELECT users.user_name, users.user_id from users) users 
-											ON tasks.created_by = users.user_id
-											WHERE project_id=$1
-											`, [ id ]);
-
-	if( error ) 
+	try 
 	{
-		return new AppError(`Operation Failed! Something went wrong!!`, 500 );
-	}
+		const { rows } = await db.query(`SELECT * FROM tasks
+												LEFT JOIN
+												(SELECT users.user_name, users.user_id from users) users 
+												ON tasks.created_by = users.user_id
+												WHERE project_id=$1
+												`, [ id ]);
 
-	res.status( 201 ).json( { data :  rows }) ;
+		res.status( 201 ).json( { data :  rows }) ;												
+											
+	}
+	catch(err)
+	{
+		return next( new AppError( errorDefinitions(err.code), 500 ) );
+	}
 }
 
-var createProject = async function( req, res )
+var createProject = async function( req, res, next )
 {
 	var { name, created_by } = req.body;
 
-	const  { rows, error }  = await db.query('INSERT INTO projects(name, created_by) VALUES($1, $2)', [ name, created_by ]);
-
-	if( error ) 
+	try 
 	{
-		return new AppError(`Operation Failed! Something went wrong!!`, 500 );
+		const { rows }  = await db.query('INSERT INTO projects(name, created_by) VALUES($1, $2) RETURNING *', [ name, created_by ]);
+		
+		res.status( 201 ).json( { status : "success", data : rows});
 	}
 
-	res.status( 201 ).json( { status : "success", data :  rows });
+	catch(err)
+	{	
+		return next( new AppError( errorDefinitions(err.code), 500 ) );
+	}
 }
 
 
