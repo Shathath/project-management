@@ -12,6 +12,12 @@ projectsRouter
             .post(projectsController.createProject)
 
 
+projectsRouter
+            .route('/:id')
+
+            .get(projectsController.getTaskByProject)
+
+
 // projectsRouter.get('/getproject', projectsController.getProject);
 
 // projectsRouter.get('/getallprojects', projectsController.getAllProjects);

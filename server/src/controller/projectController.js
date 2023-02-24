@@ -100,7 +100,7 @@ var createProject = async function( req, res, next )
 	{
 		const { rows }  = await db.query('INSERT INTO projects(name, created_by) VALUES($1, $2) RETURNING *', [ name, created_by ]);
 		
-		res.status( 201 ).json( { status : "success", data : rows});
+		res.status( 201 ).json( { status : "success", data : rows });
 	}
 
 	catch(err)
