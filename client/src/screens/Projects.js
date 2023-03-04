@@ -1,10 +1,10 @@
 import React from 'react';
 
-import CreateProject from '../components/projects/createProject';
+import ProjectList from '../components/projects/ProjectList'
 
 function Projects()
 {
-    return <CreateProject />
+    return <ProjectList />
 }
 
 export default Projects;

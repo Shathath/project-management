@@ -7,8 +7,8 @@ const designationRouter = express.Router();
 
 //designationRouter.get('/getuser', designationController.getAllDesignation);
 
-designationRouter.get('/designations', designationController.getAllDesignation);
+designationRouter.get('/', designationController.getAllDesignation);
 
-designationRouter.post('/designations', designationController.createDesignation);
+designationRouter.post('/', designationController.createDesignation);
 
 module.exports = designationRouter;

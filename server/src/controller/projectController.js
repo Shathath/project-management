@@ -11,20 +11,11 @@ var isRequestHasQueryString = function( req = {} )
 	return req.hasOwnProperty( "query" );
 }
 
-var getAllProjects  = async function( req, res )
+var getAllProjects  = async function( req, res, next )
 {
 	let QUERY = 'SELECT * FROM projects';
 
 	let values = [];
-	
-	if( isRequestHasQueryString( req ) ) 
-	{
-		var { filterQuery, values : filterValues } = getProjectsFilterQuery( req );
-
-		QUERY+=" "+filterQuery;
-
-		values = filterValues ;
-	}
 
 	try 
 	{
@@ -41,7 +32,7 @@ var getAllProjects  = async function( req, res )
 				Object.assign( rowObj , matchedCountObj[0] )
 			})
 		}
-		res.status( 200 ).json({ data : rows });
+		return res.status( 200 ).json({ data : rows });
 
 	}
 	
@@ -51,7 +42,7 @@ var getAllProjects  = async function( req, res )
 	}
 }
 
-var getProject = async function( req, res )
+var getProject = async function( req, res , next)
 {
 	try 
 	{

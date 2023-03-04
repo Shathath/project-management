@@ -1,32 +1,15 @@
-import { configureStore, createSlice }  from '@reduxjs/toolkit';
+import { configureStore }  from '@reduxjs/toolkit';
 
-const projectSlice = createSlice(
-{
-    name : 'projects',
-
-    initialState : [],
-
-    reducers : 
-    {
-        addProject : function( state, action )
-        {
-            state.push( action.payload )
-        },
-
-        removeProject : function( state, action ) 
-        {
-
-        }
-        
-    }
-})
+import { projectsReducer  } from './slices/projectsSlice';
 
 const store = configureStore(
 {
     reducer: 
     {
-        projects : projectSlice.reducer
+        projects : projectsReducer
     }
 })
 
 export { store };
+
+export * from './thunks/fetchProjects'
