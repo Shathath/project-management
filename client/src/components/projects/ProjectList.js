@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useFetch } from '../../hooks/usefetch';
 
 import { fetchProjects } from '../../store/store';
+
+import Spinner from './generic/Spinner';
+
 
 function ProjectsList()
 {
     const dispatch = useDispatch();
-
-   // const response = useFetch('/v1/projects');
-
-   // console.log( response );
 
     const { isLoading, data, error } = useSelector((state)=>
     {
@@ -22,12 +20,10 @@ function ProjectsList()
     {
         dispatch( fetchProjects() );
 
-    }, [] )
+    }, [ dispatch ] )
 
-    console.log( isLoading );
-
-    return <main>
-        {isLoading && <p>Loading...</p>}
+    return <main className='full-height'>
+        {isLoading && <Spinner width="100" height="50"></Spinner>}
         { data && <p>Data Loaded</p> }
         { error && <p>{error}</p>}
     </main>
