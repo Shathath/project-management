@@ -6,10 +6,7 @@ const AppError = require('../helpers/appError');
 
 const errorDefinitions = require('../helpers/errorDefinitions');
 
-var isRequestHasQueryString = function( req = {} ) 
-{
-	return req.hasOwnProperty( "query" );
-}
+
 
 var getAllProjects  = async function( req, res, next )
 {
@@ -85,11 +82,16 @@ var getTaskByProject = async function( req, res )
 
 var createProject = async function( req, res, next )
 {
-	var { name, created_by } = req.body;
+	var { name, created_by, users } = req.body;
 
 	try 
 	{
-		const { rows }  = await db.query('INSERT INTO projects(name, created_by) VALUES($1, $2) RETURNING *', [ name, created_by ]);
+		const { rows }  = await db.query('INSERT INTO projects(name, created_by,users) VALUES($1, $2) RETURNING *', [ name, created_by ]);
+
+		if( rows.length ) 
+		{
+			
+		}
 		
 		res.status( 201 ).json( { status : "success", data : rows });
 	}

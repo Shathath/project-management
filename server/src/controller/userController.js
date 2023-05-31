@@ -1,3 +1,5 @@
+const Utils = require('../Utils');
+
 const { db } = require('../model/db');
 
 
@@ -15,16 +17,15 @@ async function checkMandatoryFieldsForUserCreation( req, res, next )
 
 var createUser = async function(req,res)
 {
-	const { name, email, designation } = req.body;
+	const { name, email, designation, password : userPassword, isCreatedByAdmin  } = req.body;
 
-	if( !name ) 
-	{
-		return res.status(200).json({ error: "Enter mandatory fields!!!"})
-	}
+	let password = isCreatedByAdmin ? Utils.generatePassword() : password;
+
+	let hashedPassword =  await Utils.hashPassword( password );
 
 	db.query(
  		
-		"insert into users( user_name, email, designation_id ) VALUES($1,$2,$3) RETURNING *", [ name, email, designation ],
+		"insert into users( user_name, email, designation_id, password, hashedPassword ) VALUES($1,$2,$3,$4) RETURNING *", [ name, email, designation, password, hashedPassword ],
 		
 		function( error, dbResponse) 
 		{	
@@ -90,6 +91,20 @@ const usersByDesignation = async function( req, res )
 	{
 		
 	}
+}
+
+/* Update user info 
+
+projects assigned 
+user profile photo
+team associated
+
+*/
+
+
+const updateUserDetails = async function( req, res ) 
+{
+
 }
 
 module.exports = 

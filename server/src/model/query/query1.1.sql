@@ -12,7 +12,10 @@ create table users
 	user_name varchar(265) not null,
 	email varchar(128) not null,
 	designation_id int references designation(designation_id),
-	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	password varchar(1024) not null,
+	create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+	passwordchangedat TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP.
+	originalpassword varchar(1024) not null
 )
 
 create table projects

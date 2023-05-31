@@ -1,9 +1,21 @@
 var  bcrypt  =  require('bcryptjs');
 
-const generatePassword = async function( password )
+const generatePassword = function()
 {
-	return await bcrypt.hash(password, 8);
+	return Math.random().toString(36).slice(2, 10);
 
+}
+
+async function hashPassword( password )
+{
+    const salt = await bcrypt.genSalt( parseInt(process.env.HASH) );
+
+    return await bcrypt.hash( password, salt );
+}
+
+async function comparePassword( plaintextPassword, hash ) 
+{
+    return await bcrypt.compare( plaintextPassword, hash);
 }
 
 const isPasswordMatch = async function( userPassword, dbPassword )
@@ -17,4 +29,4 @@ const isEmptyString = function( str )
 }
 
 
-module.exports = {  generatePassword, isPasswordMatch, isEmptyString }
+module.exports = {  generatePassword, isPasswordMatch, isEmptyString, hashPassword, comparePassword }

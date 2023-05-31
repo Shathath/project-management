@@ -6,29 +6,21 @@ const AppError = require('../helpers/appError');
 
 const bcrypt = require('bcrypt');
 
-async function hashPassword( password )
-{
-    const salt = await bcrypt.genSalt( parseInt(process.env.HASH) );
+const Utils = require('../Utils')
 
-    return await bcrypt.hash( password, salt );
-}
-
-async function comparePassword(plaintextPassword, hash ) 
-{
-    return await bcrypt.compare(plaintextPassword, hash);
-}
 
 async function verifyUser( req, res, next )
 {
     if( req.headers.authorization ) 
     {
-        const token         = req.headers.authorization.split(" ")[1]
+        const token             = req.headers.authorization.split(" ")[1]
         
-        const decoded       = jwt.verify( token, process.env.SECRET );
+        const decoded           = jwt.verify( token, process.env.JWT_SECRET );
 
-        const { rows }      = await db.query(`SELECT * from users where user_id=$1`, [ decoded.id ]);
+        const { rows, error }   = await db.query(`SELECT * from users where user_id=$1`, [ decoded.id ]);
 
-        if( rows.length > 0 ) 
+        /* User present */
+        if( rows.length > 0 )
         {
             req.user = rows;
         }
@@ -36,7 +28,16 @@ async function verifyUser( req, res, next )
         {
             return next(new AppError('User not found!', 401));
         }
+
+        var passwordChangedTime =  parseInt(new Date(rows[0].passwordchangedat).getTime()/1000);
+
+        if( decoded.iat < passwordChangedTime ) 
+        {
+            return next( new AppError("You have changed the password, plz login", 401))
+        }
+
     }
+
     next()
 }
 
@@ -55,7 +56,7 @@ const userLogin = async function( req, res )
 
         if( rows.length > 0 ) 
         {
-            const isValidCredential = await comparePassword( userPassword, rows[0].password );
+            const isValidCredential = await Utils.comparePassword( userPassword, rows[0].password );
 
             if( !isValidCredential ) 
             {
@@ -80,16 +81,18 @@ const userSignUp = async function( req, res )
 
     try 
     {
-        const hashedPasswd     = await hashPassword( password );;
+        const hashedPasswd     = await Utils.hashPassword( password );;
 
-        const { rows, error  } = await db.query('INSERT INTO USERS(user_name,email,password) values($1,$2,$3) RETURNING *', [ name, email, hashedPasswd ]);
+        const { rows, error  } = await db.query('INSERT INTO USERS(user_name,email,password,originalpassword) values($1,$2,$3,$4) RETURNING *', [ name, email, hashedPasswd, password ]);
+
+        console.log( rows );
 
         if( error ) 
         {
            return res.status( 500 ).json( {  status : "FAILED", error : error });
         }
 
-        const token = jwt.sign( { id : rows[0].user_id }, process.env.SECRET );
+        const token = jwt.sign( { id : rows[0].user_id }, process.env.JWT_SECRET );
 
         res.status( 200 ).json( { status: "success", token, data : { name, email } })
     }
