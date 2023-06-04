@@ -10,6 +10,8 @@ const Utils = require('../Utils')
 
 const crypto  = require('crypto');
 
+const { sendEmail } = require('../helpers/email')
+
 
 async function verifyUser( req, res, next )
 {
@@ -104,18 +106,14 @@ const userSignUp = async function( req, res )
 
 async function forgotPassword( req, res, next) 
 {
- //   console.log( req );
 
     let { email } = req.body;
 
-    console.log( email );
-
     try 
     {
-
         //1. Get user from db
 
-        const { rows: userRows, error: userError }   = await db.query(`SELECT * FROM USERS WHERE EMAIL=$1`,[ email ]);
+        var { rows: userRows, error: userError }   = await db.query(`SELECT * FROM USERS WHERE EMAIL=$1`,[ email ]);
 
         if( !userRows.length ) 
         {
@@ -127,26 +125,32 @@ async function forgotPassword( req, res, next)
          //2.  Generate random token and assigned to user
 
         const resetToken = Utils.generateResetToken();
-
         
         const encryptResetToken = Utils.encryptResetToken( resetToken );
         
-        console.log( encryptResetToken )
-        
         const expiryDate = new Date(Date.now() + ( 10 * 60 * 1000 ));
-
-
-        console.log( { resetToken, encryptResetToken, expiryDate, id : userRows[0].user_id } );
 
         const { rows, error } = await db.query('UPDATE users SET passwordresettoken=$1, passwordresettokenexpiresin=$2 where user_id=$3',[ encryptResetToken, expiryDate, userRows[0].user_id ])
         
-        return res.status(200).json( { status : "success "})
+        const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+
+        console.log( resetURL )
+
+        const message  = `Forgot your password ? Submit your new password in this url ${resetURL} this link will be valid for 10 minutes.`
+            
+        await sendEmail({ email, message, subject : 'Password reset' });
+
+        console.log( "Test ")
+
+        return res.status(200).json( { status : "success", message : 'Reset password link to the email successfully!.'})
         
         //3. send the token to user
 
     }
     catch(e)
     {
+        await db.query('UPDATE users SET passwordresettoken=$1, passwordresettokenexpiresin=$2 where user_id=$3',[ null, null, userRows[0].user_id ])
+    
         return res.status(400).json({ status : "failed", error : e  })
     }
     
