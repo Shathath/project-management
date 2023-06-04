@@ -8,6 +8,8 @@ const bcrypt = require('bcrypt');
 
 const Utils = require('../Utils')
 
+const crypto  = require('crypto');
+
 
 async function verifyUser( req, res, next )
 {
@@ -85,14 +87,12 @@ const userSignUp = async function( req, res )
 
         const { rows, error  } = await db.query('INSERT INTO USERS(user_name,email,password,originalpassword) values($1,$2,$3,$4) RETURNING *', [ name, email, hashedPasswd, password ]);
 
-        console.log( rows );
-
         if( error ) 
         {
            return res.status( 500 ).json( {  status : "FAILED", error : error });
         }
 
-        const token = jwt.sign( { id : rows[0].user_id }, process.env.JWT_SECRET );
+        const token = jwt.sign( { id : rows[0].user_id }, process.env.JWT_SECRET, { expiresIn : process.env.JWT_EXPIRESIN } );
 
         res.status( 200 ).json( { status: "success", token, data : { name, email } })
     }
@@ -102,9 +102,60 @@ const userSignUp = async function( req, res )
     }
 }
 
+async function forgotPassword( req, res, next) 
+{
+ //   console.log( req );
+
+    let { email } = req.body;
+
+    console.log( email );
+
+    try 
+    {
+
+        //1. Get user from db
+
+        const { rows: userRows, error: userError }   = await db.query(`SELECT * FROM USERS WHERE EMAIL=$1`,[ email ]);
+
+        if( !userRows.length ) 
+        {
+            return next( new AppError('Users doesnt exist', 404))
+        }
+
+        console.log( email );
+
+         //2.  Generate random token and assigned to user
+
+        const resetToken = Utils.generateResetToken();
+
+        
+        const encryptResetToken = Utils.encryptResetToken( resetToken );
+        
+        console.log( encryptResetToken )
+        
+        const expiryDate = new Date(Date.now() + ( 10 * 60 * 1000 ));
+
+
+        console.log( { resetToken, encryptResetToken, expiryDate, id : userRows[0].user_id } );
+
+        const { rows, error } = await db.query('UPDATE users SET passwordresettoken=$1, passwordresettokenexpiresin=$2 where user_id=$3',[ encryptResetToken, expiryDate, userRows[0].user_id ])
+        
+        return res.status(200).json( { status : "success "})
+        
+        //3. send the token to user
+
+    }
+    catch(e)
+    {
+        return res.status(400).json({ status : "failed", error : e  })
+    }
+    
+}
+
 module.exports = 
 {
     userLogin,
     userSignUp,
-    verifyUser
+    verifyUser,
+    forgotPassword
 }

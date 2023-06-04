@@ -30,5 +30,9 @@ userRouter
 
         .post( authController.userLogin )
 
+userRouter.route('/forgotPassword')
+        
+          .post( authController.forgotPassword )
+
 
 module.exports = userRouter;
