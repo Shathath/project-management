@@ -127,8 +127,22 @@ a {
   border : 4px solid #f3f3f3;
   border-top: 4px solid black;
   animation: spin 2s linear infinite;
-  width: 30px;
-  height: 30px;
+}
+
+.loader.small {
+   width : 35px;
+   height: 35px;
+}
+
+.loader.normal {
+  width : 45x;
+  height: 45px;
+}
+
+
+.loader.large {
+ width:  60px;
+  height: 60px;
 }
 
 @keyframes spin {

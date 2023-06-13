@@ -23,7 +23,8 @@ create table projects
 	 project_id bigint serial primary key,
 	 name varchar(265) not null,
 	 created_by int references users(users_id),
-	 create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+	 create_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+	 tasks integer []
 )
 
 create table tasks

@@ -21,19 +21,13 @@ var createTask = async function(req,res)
 
 	try 
 	{
-		const { rows, error  } = await db.query("INSERT INTO tasks(task_name, description, status, duedate, priority, created_by, project_id, module_id) VALUES($1,$2,$3,$4,$5,$6,$7, $8) RETURNING * ",[task_name, description, status, duedate, priority, created_by, project_id, module_id])
+		const { rows  } = await db.query("INSERT INTO tasks(task_name, description, status, duedate, priority, created_by, project_id, module_id,assignedto) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING * ",[task_name, description, status, new Date(duedate).toISOString(), priority, created_by, project_id, module_id, assigned_to])
 
-		if( error ) 
-		{
-			res.status( 500 ).json(
-				{
-					status : 'FAILED',
-		
-					error : 'Not able to QUERY DB'
-				})
-		}
 
-		assigned_to && assigned_to.split(',').forEach((val) => 
+		await db.query('UPDATE projects set tasks = array_append(tasks,$1) where project_id=$2', [ rows[0].task_id, project_id ] );
+
+
+		assigned_to && assigned_to.forEach((val) => 
 		{
 			db.query('INSERT INTO tasksusersmap(task_id,user_id) VALUES($1,$2)', [rows[0].task_id, val]);
 		})
@@ -42,6 +36,8 @@ var createTask = async function(req,res)
 	}
 	catch(error)
 	{
+		console.log( error );
+
 		res.status(404).json({ error : error })
 	}
 }
@@ -109,7 +105,9 @@ async function updateTask( req, res )
 {
 	let { id } = req.params;
 
-	const { query, values } = QueryBuilder.createUpdateQuery(
+	let { taskid, taskname, priority, projectid } = req.body;
+
+	/*const { query, values } = QueryBuilder.createUpdateQuery(
 	{
 		tableName : "tasks",
 
@@ -120,7 +118,14 @@ async function updateTask( req, res )
 
 	values.push( id );
 
-	const { rows , error } = await db.query( query, values );
+	const { rows , error } = await db.query( query, values ); */
+
+
+	const { rows , error } = await db.query("UPDATE tasks set task_name=$1, priority=$2 WHERE task_id=$3 RETURNING *", [  taskname, priority, id ] );
+
+	const arrayid  = `{${id}}`;
+
+	await db.query(`UPDATE projects set tasks=array_append(tasks,$1) where NOT tasks @> $2 and project_id=$3`,[ taskid, arrayid ,projectid ] )
 
 	if( error ) 
 	{

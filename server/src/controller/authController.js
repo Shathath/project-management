@@ -8,8 +8,6 @@ const bcrypt = require('bcrypt');
 
 const Utils = require('../Utils')
 
-const crypto  = require('crypto');
-
 const { sendEmail } = require('../helpers/email')
 
 
@@ -120,32 +118,24 @@ async function forgotPassword( req, res, next)
             return next( new AppError('Users doesnt exist', 404))
         }
 
-        console.log( email );
-
          //2.  Generate random token and assigned to user
 
         const resetToken = Utils.generateResetToken();
         
         const encryptResetToken = Utils.encryptResetToken( resetToken );
         
-        const expiryDate = new Date(Date.now() + ( 10 * 60 * 1000 ));
+        const expiryDate = new Date(Date.now() + ( 30 * 60 * 1000 ));
 
         const { rows, error } = await db.query('UPDATE users SET passwordresettoken=$1, passwordresettokenexpiresin=$2 where user_id=$3',[ encryptResetToken, expiryDate, userRows[0].user_id ])
         
-        const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-
-        console.log( resetURL )
+        const resetURL = `${req.protocol}://${req.get('host')}/v1/users/resetPassword/${resetToken}`;
 
         const message  = `Forgot your password ? Submit your new password in this url ${resetURL} this link will be valid for 10 minutes.`
             
         await sendEmail({ email, message, subject : 'Password reset' });
 
-        console.log( "Test ")
-
         return res.status(200).json( { status : "success", message : 'Reset password link to the email successfully!.'})
         
-        //3. send the token to user
-
     }
     catch(e)
     {
@@ -156,10 +146,59 @@ async function forgotPassword( req, res, next)
     
 }
 
+async function resetPassword( req, res, next ) 
+{
+
+    let { token } = req.params;
+
+    const { password } = req.body;
+
+    try 
+    {
+        let hashedResetToken = Utils.encryptResetToken( token );
+
+        // 1. Get User based on token & Check token expiry 
+    
+        const { rows : userRows, error } = await db.query(`SELECT * FROM users where passwordresettoken=$1 AND passwordresettokenexpiresin >= now()`, [ hashedResetToken ] );
+    
+        if( !userRows.length ) 
+        {
+            return next( new AppError("User doesn't exist", 401))
+        }
+    
+    
+        req.user  = userRows[0];
+    
+        req.body = { email : userRows[0].email, password }
+    
+        const hashedPassword  = await Utils.hashPassword( password );
+    
+        // 2. Set the user new password
+    
+        const { rows: udpatedUserRows, error : updateUserRowsError}  = await db.query(`UPDATE USERS SET password=$1,originalpassword=$2,passwordresettoken=$3,passwordresettokenexpiresin=$4,passwordchangedat=now() WHERE user_id=$5`, [ hashedPassword, password, null, null, userRows[0].user_id  ]);
+
+        if(  updateUserRowsError.length ) 
+        {
+            return res.status(200).json({ status : "success", message : "Password resetted successfully"})
+        }
+    }   
+    
+    catch(e) 
+    { 
+        return res.status(400).json( { status : 'failed', error : e})
+    }
+
+
+
+
+    // 4. Login the user and send a jwt token.
+}
+
 module.exports = 
 {
     userLogin,
     userSignUp,
     verifyUser,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }

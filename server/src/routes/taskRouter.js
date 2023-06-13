@@ -17,7 +17,7 @@ taskRouter
 
         .get( taskController.getTask )
 
-        .put( taskController.updateTask)
+        .patch( taskController.updateTask )
         
 
 module.exports = taskRouter;

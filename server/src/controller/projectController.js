@@ -82,18 +82,19 @@ var getTaskByProject = async function( req, res )
 
 var createProject = async function( req, res, next )
 {
-	var { name, created_by, users } = req.body;
+	var { name, created_by } = req.body;
+
+	console.log( name, created_by )
 
 	try 
 	{
-		const { rows }  = await db.query('INSERT INTO projects(name, created_by,users) VALUES($1, $2) RETURNING *', [ name, created_by ]);
+		const { rows }  = await db.query('INSERT INTO projects( name, created_by ) VALUES($1, $2) RETURNING *', [ name, created_by ]);
 
 		if( rows.length ) 
 		{
-			
+			return res.status( 201 ).json( { status : "success", data : rows });
 		}
 		
-		res.status( 201 ).json( { status : "success", data : rows });
 	}
 
 	catch(err)

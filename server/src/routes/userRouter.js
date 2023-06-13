@@ -6,6 +6,12 @@ const authController = require('../controller/authController');
 
 const userRouter = express.Router();
 
+
+userRouter.route('/resetPassword/:token')
+        
+          .patch( authController.resetPassword )
+
+
 userRouter
         .route('/')
 
@@ -33,6 +39,7 @@ userRouter
 userRouter.route('/forgotPassword')
         
           .post( authController.forgotPassword )
-
+          
+          
 
 module.exports = userRouter;
